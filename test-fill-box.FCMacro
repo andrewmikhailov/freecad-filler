@@ -1,4 +1,5 @@
 import Part
+from freecad_filler import cartesian_filler as filler
 from FreeCAD import Base
 
 # Create a document with the given name
@@ -8,7 +9,11 @@ document = App.newDocument('FreeCAD filler test')
 boxShape = Part.makeBox(100, 1000, 100, Base.Vector(0, 0, 0))
 # An object to display the shape
 box = document.addObject('Part::Feature', 'Box')
-box.Shape = boxShape
+# box.Shape = boxShape
+
+# Fill a shape with smaller boxes by the Cartesian rule
+fractionShape = Part.makeBox(10, 10, 10, Base.Vector(0, 0, 0))
+box.Shape = filler.fill_shape(boxShape, fractionShape)
 
 # Switch to the most convenient view
 Gui.SendMsgToActiveView("ViewFit")
