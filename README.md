@@ -1,6 +1,8 @@
 # FreeCAD shape filler
 This FreeCAD Python script takes a given shape (first) and fills this shape with another shape (second).
 
+To read more about FreeCAD programming see [English tutorial](https://www.freecadweb.org/wiki/Python_scripting_tutorial) or [Russian tutorial](https://www.freecadweb.org/wiki/Python_scripting_tutorial/ru).
+
 ## Sample code to create a long box shape
 ```
 import Part
