@@ -1,23 +1,60 @@
+import math
 import Part
-from freecad_filler import cartesian_filler as filler
 from FreeCAD import Base
 
 # Create a document with the given name
 document = App.newDocument('FreeCAD filler test')
 
+# Euclidean distance between 2 points
+def euclidean_distance(first, second):
+	return math.sqrt(math.pow(first.x - second.x, 2) + math.pow(first.y - second.y, 2) + math.pow(first.z - second.z, 2))
+
+# Dimensions of a box solid shape
+def shape_box_dimensions(shape):
+    height = euclidean_distance(shape.Edges[6].Vertexes[0].Point, shape.Edges[6].Vertexes[1].Point)
+    length = euclidean_distance(shape.Edges[7].Vertexes[0].Point, shape.Edges[7].Vertexes[1].Point)
+    width = euclidean_distance(shape.Edges[8].Vertexes[0].Point, shape.Edges[8].Vertexes[1].Point)
+    return width, length, height
+
+def shape_box_fill(first, second, distance):
+    # First object properties
+    placementFirst = first.Placement.Base
+    widthFirst, lengthFirst, heightFirst = shape_box_dimensions(first)
+    # Second object properties
+    widthSecond, lengthSecond, heightSecond = shape_box_dimensions(second)
+    shape = None
+    z = placementFirst.z
+    while z < placementFirst.z + heightFirst:
+        y = placementFirst.y
+        while y < placementFirst.y + lengthFirst:
+            x = placementFirst.x
+            while x < placementFirst.x + widthFirst:
+                if shape == None:
+                    # The initial filler shape
+                    shape = Part.makeBox(widthSecond, lengthSecond, heightSecond, Base.Vector(x, y, z))
+                else:
+                    # The on-going filler shape
+                    onGoingShape = Part.makeBox(widthSecond, lengthSecond, heightSecond, Base.Vector(x, y, z))
+                    shape = shape.fuse(onGoingShape)
+                x = x + widthSecond + distance
+            y = y + lengthSecond + distance
+        z = z + heightSecond + distance
+    return shape
+
 # A box shape
-boxShape = Part.makeBox(100, 1000, 100, Base.Vector(0, 0, 0))
+boxShape = Part.makeBox(10, 45, 70, Base.Vector(11, 13, 17))
 # An object to display the shape
 box = document.addObject('Part::Feature', 'Box')
-# box.Shape = boxShape
+box.Shape = boxShape
 
 # Fill a shape with smaller boxes by the Cartesian rule
 fractionShape = Part.makeBox(10, 10, 10, Base.Vector(0, 0, 0))
-box.Shape = filler.fill_shape(boxShape, fractionShape)
+box.Shape = shape_box_fill(boxShape, fractionShape, 3)
+# shape_box_fill(boxShape, fractionShape)
+
+# Re-draw the document
+document.recompute()
 
 # Switch to the most convenient view
 Gui.SendMsgToActiveView("ViewFit")
 Gui.activeDocument().activeView().viewAxonometric()
-
-# Re-draw the document
-document.recompute()
