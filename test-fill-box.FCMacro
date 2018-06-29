@@ -43,12 +43,20 @@ def shape_box_fill(first, second, distance):
     shape.Placement.Rotation = placementRotationFirst
     return shape
 
+# A factory to create a standard brick which was produced in the 19th century.
+# Such brick has the following dimensions:
+# 270 * 135 * 70 mm
+class TsarBrickFactory:
+    @staticmethod
+    def create(location):
+        return Part.makeBox(270, 135, 70, location)
+
 # Original test box shape with placement offset and rotation
-boxShape = Part.makeBox(10, 45, 70, Base.Vector(11, 13, 17))
+boxShape = Part.makeBox(1000, 450, 140, Base.Vector(11, 13, 17))
 boxShape.rotate(Base.Vector(0, 0, 0), Base.Vector(0, 1, 0), 36)
 
 # A fraction shape to be used for filling the original shape
-fractionShape = Part.makeBox(10, 10, 10, Base.Vector(0, 0, 0))
+fractionShape = TsarBrickFactory.create(Base.Vector(0, 0, 0))
 
 # An object to display the final shape
 box = document.addObject('Part::Feature', 'Box')
