@@ -41,16 +41,16 @@ def shape_box_fill(first, second, distance):
         z = z + heightSecond + distance
     return shape
 
-# A box shape
+# Original test box shape with placement offset and rotation
 boxShape = Part.makeBox(10, 45, 70, Base.Vector(11, 13, 17))
-# An object to display the shape
-box = document.addObject('Part::Feature', 'Box')
-box.Shape = boxShape
 
-# Fill a shape with smaller boxes by the Cartesian rule
+# A fraction shape to be used for filling the original shape
 fractionShape = Part.makeBox(10, 10, 10, Base.Vector(0, 0, 0))
+
+# An object to display the final shape
+box = document.addObject('Part::Feature', 'Box')
+# Fill an original test shape with smaller fraction boxes by the Cartesian rule
 box.Shape = shape_box_fill(boxShape, fractionShape, 3)
-# shape_box_fill(boxShape, fractionShape)
 
 # Re-draw the document
 document.recompute()
