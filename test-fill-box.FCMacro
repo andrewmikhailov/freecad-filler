@@ -18,17 +18,18 @@ def shape_box_dimensions(shape):
 
 def shape_box_fill(first, second, distance):
     # First object properties
-    placementFirst = first.Placement.Base
+    placementBaseFirst = first.Placement.Base
+    placementRotationFirst = first.Placement.Rotation
     widthFirst, lengthFirst, heightFirst = shape_box_dimensions(first)
     # Second object properties
     widthSecond, lengthSecond, heightSecond = shape_box_dimensions(second)
     shape = None
-    z = placementFirst.z
-    while z < placementFirst.z + heightFirst:
-        y = placementFirst.y
-        while y < placementFirst.y + lengthFirst:
-            x = placementFirst.x
-            while x < placementFirst.x + widthFirst:
+    z = placementBaseFirst.z
+    while z < placementBaseFirst.z + heightFirst:
+        y = placementBaseFirst.y
+        while y < placementBaseFirst.y + lengthFirst:
+            x = placementBaseFirst.x
+            while x < placementBaseFirst.x + widthFirst:
                 if shape == None:
                     # The initial filler shape
                     shape = Part.makeBox(widthSecond, lengthSecond, heightSecond, Base.Vector(x, y, z))
@@ -39,10 +40,12 @@ def shape_box_fill(first, second, distance):
                 x = x + widthSecond + distance
             y = y + lengthSecond + distance
         z = z + heightSecond + distance
+    shape.Placement.Rotation = placementRotationFirst
     return shape
 
 # Original test box shape with placement offset and rotation
 boxShape = Part.makeBox(10, 45, 70, Base.Vector(11, 13, 17))
+boxShape.rotate(Base.Vector(0, 0, 0), Base.Vector(0, 1, 0), 36)
 
 # A fraction shape to be used for filling the original shape
 fractionShape = Part.makeBox(10, 10, 10, Base.Vector(0, 0, 0))
